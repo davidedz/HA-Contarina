@@ -1,0 +1,18 @@
+# https://www.home-assistant.io/integrations/default_config/
+default_config:
+
+# https://www.home-assistant.io/integrations/homeassistant/
+homeassistant:
+  debug: true
+
+# https://www.home-assistant.io/integrations/logger/
+logger:
+  default: info
+  logs:
+    custom_components.contarina: debug
+
+sensor:
+  - platform: contarina
+    zone_id: 20
+    name: "Svuotamenti"
+    api_url: "https://contarina.it/ajax/moduli/appbugfix/api.test/ecocalendari"
