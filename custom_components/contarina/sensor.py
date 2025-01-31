@@ -69,7 +69,7 @@ class APISensor(SensorEntity):
 
         self._file_path = data_dir / "ecocalendari.json"
 
-        _LOGGER.error("Zone ID: %s", self._zone_id)
+        _LOGGER.debug("Zone ID: %s", self._zone_id)
 
     @property
     def name(self):
