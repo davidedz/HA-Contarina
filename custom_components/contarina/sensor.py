@@ -1,16 +1,15 @@
-from datetime import datetime, timedelta, timezone, UTC
-from enum import Enum
+"""Imlement the Contarina sensor."""
 import json
 import logging
+from datetime import UTC, datetime, timedelta
+from enum import Enum
 from pathlib import Path
 
 import requests
 import voluptuous as vol
-
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,26 +29,10 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Configura la piattaforma del sensore."""
+def setup_platform(hass, config, add_entities, discovery_info=None) -> None:
+    """Configure platform of the sensor."""
     api_url = config.get(CONF_API_URL)
-    # name_prossimo_svuotamento = config.get(CONF_NAME)
     zone_id = config.get(CONF_ZONE_ID)
-    # unique_id_prossimo_svuotamento = (
-    #     f"contarina_{name_prossimo_svuotamento.lower().replace(' ','_')}_{zone_id}"
-    # )
-
-    # name_prossimo_svuotamento = "Prossimo Svuotamento"
-    # unique_id_prossimo_svuotamento = (
-    #     f"contarina_{name_prossimo_svuotamento.lower().replace(' ','_')}_{zone_id}"
-    # )
-    # prossimo_svuotamento = APISensor(
-    #     name_prossimo_svuotamento,
-    #     api_url,
-    #     zone_id,
-    #     unique_id_prossimo_svuotamento,
-    #     EmptyingSensorType.NextEmptying,
-    # )
 
     name_svuotamento_di_oggi = "Svuotamento di Oggi"
     unique_id_svuotamento_di_oggi = (
@@ -63,7 +46,6 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         EmptyingSensorType.TodayEmptying,
     )
 
-    # add_entities([prossimo_svuotamento, svuotamento_di_oggi], True)
     add_entities([svuotamento_di_oggi], True)
 
 
