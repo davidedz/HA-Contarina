@@ -1,4 +1,5 @@
 """Imlement the Contarina sensor."""
+
 import json
 import logging
 from datetime import UTC, datetime, timedelta
@@ -36,7 +37,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None) -> None:
 
     name_svuotamento_di_oggi = "Svuotamento di Oggi"
     unique_id_svuotamento_di_oggi = (
-        f"contarina_{name_svuotamento_di_oggi.lower().replace(' ','_')}_{zone_id}"
+        f"contarina_{name_svuotamento_di_oggi.lower().replace(' ', '_')}_{zone_id}"
     )
     svuotamento_di_oggi = APISensor(
         name_svuotamento_di_oggi,
