@@ -1,16 +1,16 @@
-from datetime import datetime, timedelta, timezone, UTC
-from enum import Enum
+"""Imlement the Contarina sensor."""
+
 import json
 import logging
+from datetime import UTC, datetime, timedelta
+from enum import Enum
 from pathlib import Path
 
 import requests
 import voluptuous as vol
-
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,30 +30,14 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Configura la piattaforma del sensore."""
+def setup_platform(hass, config, add_entities, discovery_info=None) -> None:
+    """Configure platform of the sensor."""
     api_url = config.get(CONF_API_URL)
-    name_prossimo_svuotamento = config.get(CONF_NAME)
     zone_id = config.get(CONF_ZONE_ID)
-    unique_id_prossimo_svuotamento = (
-        f"contarina_{name_prossimo_svuotamento.lower().replace(' ','_')}_{zone_id}"
-    )
-
-    name_prossimo_svuotamento = "Prossimo Svuotamento"
-    unique_id_prossimo_svuotamento = (
-        f"contarina_{name_prossimo_svuotamento.lower().replace(' ','_')}_{zone_id}"
-    )
-    prossimo_svuotamento = APISensor(
-        name_prossimo_svuotamento,
-        api_url,
-        zone_id,
-        unique_id_prossimo_svuotamento,
-        EmptyingSensorType.NextEmptying,
-    )
 
     name_svuotamento_di_oggi = "Svuotamento di Oggi"
     unique_id_svuotamento_di_oggi = (
-        f"contarina_{name_svuotamento_di_oggi.lower().replace(' ','_')}_{zone_id}"
+        f"contarina_{name_svuotamento_di_oggi.lower().replace(' ', '_')}_{zone_id}"
     )
     svuotamento_di_oggi = APISensor(
         name_svuotamento_di_oggi,
@@ -63,7 +47,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         EmptyingSensorType.TodayEmptying,
     )
 
-    add_entities([prossimo_svuotamento, svuotamento_di_oggi], True)
+    add_entities([svuotamento_di_oggi], True)
 
 
 class APISensor(SensorEntity):
@@ -85,7 +69,7 @@ class APISensor(SensorEntity):
 
         self._file_path = data_dir / "ecocalendari.json"
 
-        _LOGGER.error("Zone ID: %s", self._zone_id)
+        _LOGGER.debug("Zone ID: %s", self._zone_id)
 
     @property
     def name(self):
@@ -161,7 +145,7 @@ class APISensor(SensorEntity):
 
                 self._state = emptyings
                 self._attributes = {
-                    "Date": day_of_emptying.date,
+                    "Date": day_of_emptying.date.date(),
                     "Zone ID": self.zone_id,
                 }
             else:
@@ -191,6 +175,7 @@ class EmptyingDay:
         self.date = datetime.fromtimestamp(self.dayTimestamp, UTC).astimezone(
             datetime.now().tzinfo
         )
+        self.date = self.date
 
     def __repr__(self) -> str:
         return f"EmptyingDay(id={self.id}, idEcocalendario={self.idEcocalendario})"
@@ -237,7 +222,7 @@ def get_next_emptying(emptyingDays: list[EmptyingDay], zone_id):
 def get_emptying_to_be_done(emptyingDays: list[EmptyingDay], zone_id) -> EmptyingDay:
     """Get emptying to be done."""
     today = datetime.now()
-    if today.hour >= 12:
+    if today.hour >= 8:
         giorni = [
             day
             for day in emptyingDays

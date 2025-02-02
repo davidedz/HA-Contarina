@@ -1,9 +1,10 @@
 {
     "domain": "contarina",
     "name": "Contarina",
-    "version": "1.0.0",
+    "codeowners": ["@davidedz"],
     "documentation": "https://github.com/davidedz/HA-Contarina",
+    "iot_class": "cloud_polling",
     "issue_tracker": "https://github.com/davidedz/HA-Contarina/issues",
-    "codeowners": ["@davidedz"]
+    "version": "1.0.0"
   }
   
